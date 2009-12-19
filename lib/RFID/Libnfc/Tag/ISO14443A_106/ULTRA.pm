@@ -6,7 +6,7 @@ use base qw(RIFD::Libnfc::Tag::ISO14443A_106);
 use RIFD::Libnfc qw(nfc_configure nfc_initiator_transceive_bytes nfc_initiator_transceive_bits append_iso14443a_crc print_hex);
 use RIFD::Libnfc::Constants;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 sub read_block {
     my ($self, $block, $noauth, $truncate) = @_;

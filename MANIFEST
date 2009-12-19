@@ -1,0 +1,24 @@
+Changes
+Libnfc.xs
+Makefile.PL
+MANIFEST
+ppport.h
+README
+typemap
+t/c-api.t
+t/p-api.t
+fallback/const-c.inc
+fallback/const-xs.inc
+lib/RFID/Libnfc/Constants.pm
+lib/RFID/Libnfc/Reader.pm
+lib/RFID/Libnfc/Tag/ISO14443A_106.pm
+lib/RFID/Libnfc/Tag/ISO14443A_106/4K.pm
+lib/RFID/Libnfc/Tag/ISO14443A_106/ULTRA.pm
+lib/RFID/Libnfc/Tag.pm
+lib/RFID/Libnfc.pm
+examples/dump.pl
+examples/tikiread.pl
+examples/tikiwrite.pl
+examples/write_4k.pl
+examples/anticol_c.pl
+META.yml                                 Module meta-data (added by MakeMaker)

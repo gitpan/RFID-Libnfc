@@ -11,7 +11,7 @@ use RFID::Libnfc::Constants;
 
 our @ISA = qw(Exporter);
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 # Items to export into callers namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
@@ -135,7 +135,7 @@ RFID::Libnfc - Perl extension for libnfc (Near Field Communication < http://www.
     printf("Reader:\t%s\n", $pdi->acName);
 
     # Try to find a MIFARE Classic tag
-    my $ti = tag_info->new();
+    my $ti = nfc_target_info_t->new();
     my $pti = $ti->_to_ptr;
     my $bool = nfc_initiator_select_tag($pdi, IM_ISO14443A_106, 0, 0, $pti);
 

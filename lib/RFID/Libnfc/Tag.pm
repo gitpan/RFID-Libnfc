@@ -6,7 +6,7 @@ use RFID::Libnfc qw(nfc_configure nfc_initiator_select_tag nfc_initiator_deselec
 use RFID::Libnfc::Constants;
 use Data::Dumper;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 my %types = (
     scalar(IM_ISO14443A_106) => 'RFID::Libnfc::Tag::ISO14443A_106'
@@ -26,7 +26,7 @@ sub new {
     $self->{debug} = $reader->{debug};
     # Try to find the requested tag type
     $self->{_last_error} = "";
-    $self->{_ti} = tag_info->new();
+    $self->{_ti} = nfc_target_info_t->new();
     $self->{_pti} = $self->{_ti}->_to_ptr;
     $self->{reader} = $reader;
     nfc_configure($reader->pdi, DCO_ACTIVATE_FIELD, 0);
@@ -71,6 +71,7 @@ sub reader {
     my $self = shift;
     return $self->{reader};
 }
+
 sub AUTOLOAD {
     our $AUTOLOAD;
     warn "$AUTOLOAD not implemented \n";

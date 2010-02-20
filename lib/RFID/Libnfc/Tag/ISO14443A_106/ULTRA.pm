@@ -6,7 +6,9 @@ use base qw(RFID::Libnfc::Tag::ISO14443A_106);
 use RFID::Libnfc qw(nfc_configure nfc_initiator_transceive_bytes nfc_initiator_transceive_bits append_iso14443a_crc print_hex);
 use RFID::Libnfc::Constants;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
+
+my $ALLOW_LOCKINGBITS_CHANGES = 0;
 
 sub read_block {
     my ($self, $block, $noauth, $truncate) = @_;
@@ -40,7 +42,7 @@ sub write_block {
     my ($self, $block, $data) = @_;
 
     return undef unless $data;
-    if ($block > 3) { # data block
+    if ($block > 3 or $ALLOW_LOCKINGBITS_CHANGES) { # data block
         my $acl = $self->acl;
         return undef unless $acl;
         if ($acl->{plbits}->{$block}) {
@@ -61,6 +63,10 @@ sub write_block {
                 printf("W: ");
                 print_hex($data);
             }
+            if ($block == 2) {
+                $self->{_last_error} = "Error committing blocking-bits changes" and return 0 
+                    unless (my $resp = nfc_initiator_transceive_bits($self->reader->pdi, pack("C", MU_WUPA), 7))
+            }
             return 1;
         } else {
             $self->{_last_error} = "Error trying to write on block $block";
@@ -69,6 +75,11 @@ sub write_block {
         $self->{_last_error} = "You are actually not allowed to write on blocks 0, 1 and 2";
     }
     return undef;
+}
+
+sub allow_lockingbits_changes {
+    my ($self, $bool) = @_;
+    $ALLOW_LOCKINGBITS_CHANGES = $bool;
 }
 
 sub read_sector {
@@ -134,6 +145,7 @@ sub _parse_locking_bits {
 sub select {
     my $self = shift;
 
+    use bytes;
     my $uid = pack("C6", @{$self->uid});
     nfc_configure($self->reader->pdi, DCO_ACTIVATE_FIELD, 0);
 
@@ -149,7 +161,7 @@ sub select {
         if (my $resp = nfc_initiator_transceive_bits($self->reader->pdi, pack("C", MU_REQA), 7)) {
             my $cmd = pack("C2", MU_SELECT1, 0x20); # ANTICOLLISION of cascade level 1
             if ($resp = nfc_initiator_transceive_bytes($self->reader->pdi, $cmd, 2)) {
-                my (@rb) = unpack("C".length($resp), $resp);
+                my (@rb) = split(//, $resp);
                 my $cuid = pack("C3", $rb[1], $rb[2], $rb[3]);
                 if ($rb[0] == 0x88) { # define a constant for 0x88
                     $cmd = pack("C9", MU_SELECT1, 0x70, @rb); # SELECT of cascade level 1  
@@ -160,7 +172,7 @@ sub select {
                         # first let's get the missing part of the uid
                         $cmd = pack("C2", MU_SELECT2, 0x20); # ANTICOLLISION of cascade level 2
                         if ($resp = nfc_initiator_transceive_bytes($self->reader->pdi, $cmd, 2)) {
-                            @rb = unpack("C".length($resp), $resp);
+                            @rb = split(//, $resp);
                             $cuid .= pack("C3", $rb[1], $rb[2], $rb[3]);
                             $cmd = pack("C9", MU_SELECT2, 0x70, @rb); # SELECT of cascade level 2
                             #my $crc = $self->crc($cmd);

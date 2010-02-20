@@ -6,7 +6,7 @@ use base qw(RFID::Libnfc::Tag::ISO14443A_106);
 use RFID::Libnfc qw(nfc_initiator_select_tag nfc_initiator_mifare_cmd print_hex);
 use RFID::Libnfc::Constants;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 # Internal representation of TABLE 3 (M001053_MF1ICS50_rev5_3.pdf)
 # the key are the actual ACL bits (C1 C2 C3) ,
@@ -150,12 +150,17 @@ sub write_sector {
     my $tblock = $self->trailer_block($sector);
     my $nblocks = ($sector < 32) ? 4 : 16;
     my $firstblock = $tblock - $nblocks + 1;
-    my @databytes = unpack("C".length($data), $data);
-    for (my $block = $firstblock; $block < $tblock; $block++) {
-        my @blockbytes = splice(@databytes, 0, 16);
-        unless ($self->write_block($block, pack("C16", @blockbytes))) {
-            $self->{_last_error} = "Errors writing to block $block";
-            return undef;
+    { 
+        use bytes;
+        my @databytes = split(//, $data);
+        for (my $block = $firstblock; $block < $tblock; $block++) {
+            my @blockbytes = splice(@databytes, 0, 16);
+            if (@blockbytes) {
+                unless ($self->write_block($block, pack("C16", @blockbytes))) {
+                    $self->{_last_error} = "Errors writing to block $block";
+                    return undef;
+                }
+            }
         }
     }
     return 1;
@@ -221,7 +226,8 @@ sub acl {
 # ACL decoding according to specs in M001053_MF1ICS50_rev5_3.pdf
 sub _parse_acl {
     my ($self, $data) = @_;
-    my ($b1, $b2, $b3, $b4) = unpack("C4", $data);
+    use bytes;
+    my ($b1, $b2, $b3, $b4) = split(//, $data);
     # TODO - extend to doublecheck using inverted flags (as suggested in the spec)
     my %acl = (
         bits => { 

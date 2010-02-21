@@ -6,7 +6,7 @@ use base qw(RFID::Libnfc::Tag::ISO14443A_106);
 use RFID::Libnfc qw(nfc_configure nfc_initiator_transceive_bytes nfc_initiator_transceive_bits append_iso14443a_crc print_hex);
 use RFID::Libnfc::Constants;
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 my $ALLOW_LOCKINGBITS_CHANGES = 0;
 
@@ -58,14 +58,16 @@ sub write_block {
         my $postfix = pack("C2", 0, 0);
         my $cmd = $prefix.pack("a".$len, $data).$postfix;
         append_iso14443a_crc($cmd, $len+2);
-        if (my $resp = nfc_initiator_transceive_bytes($self->reader->pdi, $cmd, $len+4)) {
+        if (nfc_initiator_transceive_bytes($self->reader->pdi, $cmd, $len+4)) {
             if ($self->{debug}) {
                 printf("W: ");
                 print_hex($data);
             }
             if ($block == 2) {
-                $self->{_last_error} = "Error committing blocking-bits changes" and return 0 
-                    unless (my $resp = nfc_initiator_transceive_bits($self->reader->pdi, pack("C", MU_WUPA), 7))
+                unless (nfc_initiator_transceive_bits($self->reader->pdi, pack("C", MU_WUPA), 7)) {
+                    $self->{_last_error} = "Error committing blocking-bits changes";
+                    return 0;
+                }
             }
             return 1;
         } else {

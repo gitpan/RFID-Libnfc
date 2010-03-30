@@ -27,3 +27,5 @@ Revision history for Perl extension Libnfc.
           now accessed through the 'nai' member.
           ( the nfc_iso14443a_info_t  structure has been mapped in Libnfc.xs)
         - some minimal cleanings
+0.09  Wed Mar 17 11:26:26 CET 2010
+        - Extended support for mifare-classic tags (now supporting 4K, 1K and MINI)

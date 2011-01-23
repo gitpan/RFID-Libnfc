@@ -30,10 +30,16 @@ Revision history for Perl extension Libnfc.
 0.09  Wed Mar 17 11:26:26 CET 2010
         - Extended support for mifare-classic tags (now supporting 4K, 1K and MINI)
 0.10  Fri Jan 21 13:54:35 CET 2011
-        - added support for the new libnfc API (the library keeps changing its API)
+        - added support for libnfc-1.4 API (the library keeps changing its API)
 0.11  Sat Jan 22 01:00:32 CET 2011
-        - dropped support for deprecated libnfc API
-          (older versions of this module can be used with older versions of the library)
+        - dropped support for libnfc API < 1.4
+          (older versions of this module could be eventually used together with
+          older versions of the libnfc library)
         - cleaner mapping of internal structures 
           (on the perl side it's not necessary anymore to care about retaining 
           the storage while references are being accessed)
+0.12  Sun Jan 23 16:57:44 CET 2011
+        - fixed some leaks (check : 470f526a767817eaf0357e1d067b836a7e0d1d33)
+        - cleaned-up libnfc version checking logic in Makefile.PL
+        - wrapping allocation/release operations with proper perl macros in the XS code
+        - updated documentation

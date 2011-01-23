@@ -9,7 +9,7 @@ use RFID::Libnfc qw(nfc_connect nfc_disconnect nfc_initiator_init nfc_configure)
 use RFID::Libnfc::Tag;
 use RFID::Libnfc::Constants;
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 sub new {
     my ($class, %args) = @_;
@@ -89,14 +89,14 @@ None by default.
 
 =over
 
-=item name ( )
+=item * name ( )
 
 returns the name of the current reader
 
 for ex.
 $name = $r->name
 
-=item connect ( TAGFAMILY, BLOCKING )
+=item * connect ( TAGFAMILY, BLOCKING )
 
 tries to connect a tag and returns a new ready-to-use RFID::Libnfc::Tag object 
 or undef if no tag is found.
@@ -107,7 +107,7 @@ $tag = $r->connect( ISO14443A_106 )
 
 NOTE: ISO14443A_106 is the only type actually implemented/supported
 
-=item pdi ( )
+=item * pdi ( )
 
 returns the underlying reader descriptor (to be used with the RFID::Libnfc procedural api)
 $pdi = $r->pdi

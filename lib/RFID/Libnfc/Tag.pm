@@ -6,7 +6,7 @@ use RFID::Libnfc qw(nfc_configure nfc_initiator_select_passive_target nfc_initia
 use RFID::Libnfc::Constants;
 use Data::Dumper;
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 my %types = (
     scalar(IM_ISO14443A_106) => 'RFID::Libnfc::Tag::ISO14443A_106'
@@ -121,11 +121,11 @@ None by default.
 
 =over
 
-=item reader
+=item * reader
 
 returns the current reader object ( RFID::Libnfc::Reader )
 
-=item error ()
+=item * error ()
 
 returns the underlying reader descriptor (to be used with the RFID::Libnfc procedural api)
 $pdi = $r->pdi

@@ -6,7 +6,7 @@ use RFID::Libnfc qw(nfc_configure nfc_initiator_select_passive_target nfc_initia
 use RFID::Libnfc::Constants;
 use Data::Dumper;
 
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 my %types = (
     scalar(IM_ISO14443A_106) => 'RFID::Libnfc::Tag::ISO14443A_106'
@@ -149,7 +149,7 @@ xant
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2009 by xant <xant@xant.net>
+Copyright (C) 2009-2011 by xant <xant@cpan.org>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.8 or,

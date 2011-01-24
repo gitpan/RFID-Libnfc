@@ -181,7 +181,7 @@ nc(THIS)
     CODE:
     RETVAL = THIS->device
            ? THIS->device->nc
-           : -1;
+           : 0xff;
     OUTPUT:
     RETVAL
 
@@ -491,10 +491,13 @@ nfc_initiator_transceive_bits(pnd, pbtTx, uiTxBits)
         byte_t          pbtRx[MAX_FRAME_LEN];
         SV              *sv = &PL_sv_undef;
     CODE:
-        sv = newSV(0);
         // TODO - handle parity
-        if (nfc_initiator_transceive_bits(pnd->device, pbtTx, uiTxBits,  NULL, pbtRx, &puiRxBits, NULL))
-            sv_setpvn(sv, pbtRx, puiRxBits/8);
+        if (nfc_initiator_transceive_bits(pnd->device, pbtTx, uiTxBits,  NULL, pbtRx, &puiRxBits, NULL)) {
+            if (puiRxBits)
+                sv = newSVpv(pbtRx, puiRxBits/8);
+            else
+                sv = newSVpv("", 0);
+        }
         RETVAL = sv;
     OUTPUT:
         RETVAL
@@ -513,9 +516,12 @@ nfc_initiator_transceive_bytes(pnd, pbtTx, uiTxLen)
         size_t          puiRxLen = 0;
         SV              *sv = &PL_sv_undef;
     CODE:
-        sv = newSV(0);
-        if (nfc_initiator_transceive_bytes(pnd->device, pbtTx, uiTxLen,  pbtRx, &puiRxLen))
-            sv_setpvn(sv, pbtRx, puiRxLen);
+        if (nfc_initiator_transceive_bytes(pnd->device, pbtTx, uiTxLen,  pbtRx, &puiRxLen)) {
+            if (puiRxLen)
+                sv = newSVpv(pbtRx, puiRxLen);
+            else
+                sv = newSVpv("", 0);
+        }
         RETVAL = sv;
     OUTPUT:
         RETVAL

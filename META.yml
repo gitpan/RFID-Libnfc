@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               RFID-Libnfc
-version:            0.12
+version:            0.13
 abstract:           Perl extension for libnfc (Near Field Communication < http://www.libnfc.org/ >)
 author:
     - Xant <xant@cpan.org>

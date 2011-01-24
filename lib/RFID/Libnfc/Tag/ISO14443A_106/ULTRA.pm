@@ -6,7 +6,7 @@ use base qw(RFID::Libnfc::Tag::ISO14443A_106);
 use RFID::Libnfc qw(nfc_configure nfc_initiator_transceive_bytes nfc_initiator_transceive_bits iso14443a_crc_append print_hex);
 use RFID::Libnfc::Constants;
 
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 my $ALLOW_LOCKINGBITS_CHANGES = 0;
 
@@ -315,7 +315,7 @@ xant
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2009 by xant <xant@xant.net>
+Copyright (C) 2009-2011 by xant <xant@cpan.org>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.8 or,
